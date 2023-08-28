@@ -1,8 +1,10 @@
 package com.example.composebmgp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.composebmgp.ui.theme.ComposeBMGPTheme
+import com.example.currencyconverter.CurrencyViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +26,17 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Greeting("Android")
+                }
+
+                val viewModel: CurrencyViewModel by viewModels()
+
+                viewModel.remoteCurrencies.observe(this) { remoteCurrencies ->
+                    Log.d("MainActivity", "Remote Currencies: $remoteCurrencies")
+                }
+
+
+                viewModel.cachedCurrencies.apply {
+                    Log.d("MainActivity", "Cached Currencies: $this")
                 }
             }
         }

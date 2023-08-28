@@ -1,90 +1,102 @@
-package com.example.composebmgp.presentation
+package com.example.mydropdown.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.composebmgp.R
+import com.example.currencyconverter.R
 
-data class DropDownItem(val currencyCode: String, @DrawableRes val flagId: Int)
-
+data class CurrencyItem(val currencyCode: String, @DrawableRes val flagResId: Int)
 
 @Composable
-fun CurrencyDropDown(modifier: Modifier) {
+fun CurrencyDropdown(modifier: Modifier) {
     val currencies = listOf(
-        DropDownItem("USD", R.drawable.baseline_flag_24),
-        DropDownItem("EUR", R.drawable.baseline_flag_circle_24),
-        DropDownItem("JPY", R.drawable.baseline_flag_24)
+        CurrencyItem("USD", R.drawable.ic_united_states_of_america),
+        CurrencyItem("EUR", R.drawable.ic_united_kingdom),
+        CurrencyItem("JPY", R.drawable.ic_japan),
     )
 
-    var isExpanded by remember { mutableStateOf(false) }
-    var selectedIndex by remember { mutableStateOf(0) }
-    var selectedCurrency = currencies.getOrNull(selectedIndex)
+    var expanded by remember { mutableStateOf(false) }
+    var selectedCurrencyIndex by remember { mutableStateOf(0) }
 
-    Card(modifier = modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
+    val selectedCurrency = currencies.getOrNull(selectedCurrencyIndex)
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
+    ) {
+        Column(
+            Modifier.clickable { expanded = !expanded }
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
                 if (selectedCurrency != null) {
                     Image(
-                        painter = painterResource(id = selectedCurrency.flagId),
-                        contentDescription = null,
+                        painter = painterResource(id = selectedCurrency.flagResId),
+                        contentDescription = "Currency Flag",
                         modifier = Modifier
-                            .size(25.dp)
+                            .size(24.dp)
                             .padding(end = 8.dp)
                     )
                     Text(text = selectedCurrency.currencyCode)
-                    Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = null)
                 }
+                
+                Spacer(modifier = Modifier.width(60.dp))
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Localized description"
+                )
+            }
 
-                if (isExpanded) {
-                    currencies.forEachIndexed { index, dropDownItem ->
-                        DropdownMenuItem(
-                            onClick = {
-                                selectedIndex = index
-                                isExpanded = false
-                            },
-                            text = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Image(
-                                        painter = painterResource(id = dropDownItem.flagId),
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(25.dp)
-                                            .padding(end = 8.dp)
-                                    )
-                                    Text(text = dropDownItem.currencyCode)
-                                }
+            if (expanded) {
+                Divider(modifier = Modifier.padding(start = 16.dp, end = 16.dp))
+
+                currencies.forEachIndexed { index, currency ->
+                    DropdownMenuItem(
+                        onClick = {
+                            selectedCurrencyIndex = index
+                            expanded = false
+                        },
+                        modifier = Modifier.padding(horizontal = 16.dp), text = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painter = painterResource(id = currency.flagResId),
+                                    contentDescription = "Currency Flag",
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .padding(end = 8.dp)
+                                )
+                                Text(text = currency.currencyCode)
                             }
-                        )
-                    }
+                        })
                 }
             }
         }
